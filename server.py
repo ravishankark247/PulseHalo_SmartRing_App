@@ -136,8 +136,7 @@ class PulseHaloRequestHandler(BaseHTTPRequestHandler):
 
 def run_server(port=8765):
     server = ThreadingHTTPServer(("0.0.0.0", port), PulseHaloRequestHandler)
-    print(f"PulseHalo Futuristic Web App listening on port {port}")
-    print("Firebase Hosting: https://pulsehalo-smartring-14a47.web.app")
+    print(f"Local API server: http://127.0.0.1:{port}", flush=True)
     server.serve_forever()
 
 
