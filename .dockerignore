@@ -1,0 +1,6 @@
+.git
+.gitignore
+.firebase
+__pycache__
+*.py[cod]
+build_standalone.py

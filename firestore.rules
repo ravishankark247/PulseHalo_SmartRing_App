@@ -1,0 +1,33 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      function isOwner() {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      function validProfile() {
+        let data = request.resource.data;
+        return data.keys().hasOnly([
+            'name', 'age', 'gender', 'heightCm', 'weightKg', 'updatedAt'
+          ])
+          && data.name is string
+          && data.name.size() > 0
+          && data.name.size() <= 80
+          && data.updatedAt is timestamp
+          && (!('age' in data) || (data.age is int && data.age >= 1 && data.age <= 120))
+          && (!('gender' in data) || (data.gender is string && data.gender.size() <= 40))
+          && (!('heightCm' in data) || (data.heightCm is number && data.heightCm >= 30 && data.heightCm <= 260))
+          && (!('weightKg' in data) || (data.weightKg is number && data.weightKg >= 2 && data.weightKg <= 500));
+      }
+
+      allow read, delete: if isOwner();
+      allow create, update: if isOwner() && validProfile();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
